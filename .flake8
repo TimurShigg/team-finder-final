@@ -7,4 +7,5 @@ exclude =
     env,
     */migrations/*
 
+extend-ignore = D
 max-line-length = 120
