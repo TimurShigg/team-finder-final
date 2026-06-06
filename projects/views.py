@@ -1,4 +1,3 @@
-# projects/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -10,18 +9,15 @@ from .forms import ProjectForm
 
 
 def project_list_view(request):
-    # Получаем все проекты от новых к старым
     projects_qs = Project.objects.all().order_by('-created_at')
 
-    # Пагинация (12 проектов на страницу)
     paginator = Paginator(projects_qs, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    # В ТЗ просят передать "projects", но для пагинации в шаблонах часто нужен page_obj
     return render(request, 'projects/project_list.html', {
         'page_obj': page_obj,
-        'projects': page_obj  # дублируем для совместимости с шаблоном
+        'projects': page_obj
     })
 
 
@@ -38,7 +34,6 @@ def project_create_view(request):
             project = form.save(commit=False)
             project.owner = request.user
             project.save()
-            # Добавляем создателя в участники
             project.participants.add(request.user)
             return redirect('projects:project_detail', project_id=project.id)
     else:
@@ -51,7 +46,6 @@ def project_create_view(request):
 def project_edit_view(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
-    # Редактировать может только автор
     if request.user != project.owner:
         return redirect('projects:project_detail', project_id=project.id)
 

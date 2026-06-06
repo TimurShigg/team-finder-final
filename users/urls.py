@@ -1,4 +1,3 @@
-# users/urls.py
 from django.urls import path
 from . import views
 
@@ -12,8 +11,6 @@ urlpatterns = [
     path('edit-profile/', views.edit_profile_view, name='edit_profile'),
     path('change-password/', views.UserPasswordChangeView.as_view(), name='change_password'),
     path('<int:user_id>/', views.user_detail_view, name='user_detail'),
-
-    # API Навыков
     path('skills/', views.skills_autocomplete_view, name='skills_autocomplete'),
     path('<int:user_id>/skills/add/', views.add_skill_view, name='add_skill'),
     path('<int:user_id>/skills/<int:skill_id>/remove/', views.remove_skill_view, name='remove_skill'),

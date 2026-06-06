@@ -1,6 +1,6 @@
 import random
 from io import BytesIO
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
@@ -39,7 +39,6 @@ def generate_avatar(text):
     img = Image.new('RGB', (200, 200), color=bg_color)
     d = ImageDraw.Draw(img)
 
-    # Рисуем букву (используем дефолтный шрифт, увеличивая его искусственно, если нет ttf)
     d.text((80, 80), text.upper(), fill=(255, 255, 255))
 
     buffer = BytesIO()
@@ -58,7 +57,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True, verbose_name='Активен')
     is_staff = models.BooleanField(default=False, verbose_name='Администратор')
 
-    # ТЗ: У каждого навыка можно получить список пользователей (skill.users)
     skills = models.ManyToManyField(Skill, related_name='users', blank=True, verbose_name='Навыки')
 
     objects = UserManager()
@@ -67,7 +65,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['name', 'surname', 'phone']
 
     def save(self, *args, **kwargs):
-        # Если аватарки нет, генерируем её из первой буквы имени
         if not self.avatar and self.name:
             self.avatar = generate_avatar(self.name[0])
         super().save(*args, **kwargs)

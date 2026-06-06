@@ -1,4 +1,3 @@
-# team_finder/urls.py
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -8,9 +7,8 @@ from django.shortcuts import redirect
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
-    path('projects/', include('projects.urls')),  # <-- ДОБАВИЛИ ЭТУ СТРОКУ
+    path('projects/', include('projects.urls')),
 
-    # Переадресация с корня на список проектов
     path('', lambda request: redirect('/projects/list/', permanent=False)),
 ]
 

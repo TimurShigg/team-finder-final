@@ -1,4 +1,3 @@
-# users/views.py
 import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
@@ -46,7 +45,6 @@ def logout_view(request):
 def user_list_view(request):
     users = User.objects.all().order_by('id')
 
-    # ТЗ Вариант 2: Фильтрация по навыкам
     skill_name = request.GET.get('skill')
     active_skill = None
     if skill_name:
@@ -57,7 +55,6 @@ def user_list_view(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    # Получаем все уникальные имена навыков для панели фильтров
     all_skills = Skill.objects.values_list('name', flat=True).distinct().order_by('name')
 
     context = {
@@ -92,13 +89,9 @@ class UserPasswordChangeView(PasswordChangeView):
     def get_success_url(self):
         return reverse_lazy('users:user_detail', kwargs={'user_id': self.request.user.id})
 
-
-# --- API для Навыков (Автодополнение, Добавление, Удаление) ---
-
 def skills_autocomplete_view(request):
     q = request.GET.get('q', '')
     if q:
-        # ТЗ: навыки, которые начинаются с подстроки q (istartswith вместо icontains)
         skills = Skill.objects.filter(name__istartswith=q).order_by('name')[:10]
         results = [{"id": skill.id, "name": skill.name} for skill in skills]
         return JsonResponse(results, safe=False)
@@ -112,7 +105,6 @@ def add_skill_view(request, user_id):
         return JsonResponse({"error": "Forbidden"}, status=403)
 
     try:
-        # Универсальное чтение данных (и для JSON, и для FormData)
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
